@@ -1,4 +1,4 @@
-## KillCounter+∞ for OBS
+# KillCounter+∞ for OBS
 
 OBS Lua script to display a kill counter with support for `+` and `∞` symbols.
 
