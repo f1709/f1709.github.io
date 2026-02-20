@@ -32,8 +32,8 @@ function update_text()
     if source ~= nil then
         local settings = obs.obs_data_create()
         local display = tostring(counter)
-        if plus_mode then display = display .. "+"
-        if infinity_mode then display = display .. "∞"
+        if plus_mode then display = display .. "+" end
+        if infinity_mode then display = display .. "∞" end
         obs.obs_data_set_string(settings, "text", display)
         obs.obs_source_update(source, settings)
         obs.obs_data_release(settings)
