@@ -113,7 +113,7 @@ function script_save(settings)
     obs.obs_data_array_release(a)
 end
 
-- KillCounter+∞ for OBS
+-- KillCounter+∞ for OBS
 
 OBS Lua script to display a kill counter with support for `+` and `∞` symbols.
 
