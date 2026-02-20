@@ -1,0 +1,114 @@
+obs = obslua
+
+counter = 0
+source_name = "KillCounter"
+
+-- 핫키 ID 저장
+hotkey_inc = obs.OBS_INVALID_HOTKEY_ID
+hotkey_dec = obs.OBS_INVALID_HOTKEY_ID
+hotkey_plus = obs.OBS_INVALID_HOTKEY_ID
+hotkey_infinity = obs.OBS_INVALID_HOTKEY_ID
+
+plus_mode = false
+infinity_mode = false
+
+function script_description()
+    return "KillCounter+∞ : 숫자 증가/감소, +, ∞ 기호 토글 지원"
+end
+
+function script_properties()
+    local props = obs.obs_properties_create()
+    obs.obs_properties_add_text(props, "source", "Text Source Name", obs.OBS_TEXT_DEFAULT)
+    return props
+end
+
+function script_update(settings)
+    source_name = obs.obs_data_get_string(settings, "source")
+    update_text()
+end
+
+function update_text()
+    local source = obs.obs_get_source_by_name(source_name)
+    if source ~= nil then
+        local settings = obs.obs_data_create()
+        local display = tostring(counter)
+        if plus_mode then display = display .. "+"
+        if infinity_mode then display = display .. "∞"
+        obs.obs_data_set_string(settings, "text", display)
+        obs.obs_source_update(source, settings)
+        obs.obs_data_release(settings)
+        obs.obs_source_release(source)
+    end
+end
+
+-- 핫키 동작
+function increment_counter(pressed)
+    if pressed then
+        counter = counter + 1
+        update_text()
+    end
+end
+
+function decrement_counter(pressed)
+    if pressed then
+        counter = counter - 1
+        update_text()
+    end
+end
+
+function toggle_plus(pressed)
+    if pressed then
+        plus_mode = not plus_mode
+        update_text()
+    end
+end
+
+function toggle_infinity(pressed)
+    if pressed then
+        infinity_mode = not infinity_mode
+        update_text()
+    end
+end
+
+-- 스크립트 로드 시 핫키 등록
+function script_load(settings)
+    hotkey_inc = obs.obs_hotkey_register_frontend("kill_counter_inc", "Increase Kill Counter", increment_counter)
+    hotkey_dec = obs.obs_hotkey_register_frontend("kill_counter_dec", "Decrease Kill Counter", decrement_counter)
+    hotkey_plus = obs.obs_hotkey_register_frontend("kill_counter_plus", "Toggle Plus (+)", toggle_plus)
+    hotkey_infinity = obs.obs_hotkey_register_frontend("kill_counter_infinity", "Toggle Infinity (∞)", toggle_infinity)
+
+    local a = obs.obs_data_get_array(settings, "kill_counter_inc")
+    obs.obs_hotkey_load(hotkey_inc, a)
+    obs.obs_data_array_release(a)
+
+    a = obs.obs_data_get_array(settings, "kill_counter_dec")
+    obs.obs_hotkey_load(hotkey_dec, a)
+    obs.obs_data_array_release(a)
+
+    a = obs.obs_data_get_array(settings, "kill_counter_plus")
+    obs.obs_hotkey_load(hotkey_plus, a)
+    obs.obs_data_array_release(a)
+
+    a = obs.obs_data_get_array(settings, "kill_counter_infinity")
+    obs.obs_hotkey_load(hotkey_infinity, a)
+    obs.obs_data_array_release(a)
+end
+
+-- 스크립트 저장 시 핫키 저장
+function script_save(settings)
+    local a = obs.obs_hotkey_save(hotkey_inc)
+    obs.obs_data_set_array(settings, "kill_counter_inc", a)
+    obs.obs_data_array_release(a)
+
+    a = obs.obs_hotkey_save(hotkey_dec)
+    obs.obs_data_set_array(settings, "kill_counter_dec", a)
+    obs.obs_data_array_release(a)
+
+    a = obs.obs_hotkey_save(hotkey_plus)
+    obs.obs_data_set_array(settings, "kill_counter_plus", a)
+    obs.obs_data_array_release(a)
+
+    a = obs.obs_hotkey_save(hotkey_infinity)
+    obs.obs_data_set_array(settings, "kill_counter_infinity", a)
+    obs.obs_data_array_release(a)
+end
