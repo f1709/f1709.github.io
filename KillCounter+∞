@@ -5,6 +5,7 @@ start_number = 0
 step_number = 1
 counter = start_number
 source_name = "KillCounter"
+format_text = "Kills: %d (Start:%d, Step:%d)"
 
 -- 핫키 ID 저장
 hotkey_inc = obs.OBS_INVALID_HOTKEY_ID
@@ -24,6 +25,7 @@ function script_properties()
     obs.obs_properties_add_text(props, "source", "Text Source Name", obs.OBS_TEXT_DEFAULT)
     obs.obs_properties_add_int(props, "start_number", "Start Number", 0, 9999, 1)
     obs.obs_properties_add_int(props, "step_number", "Step Number", 1, 100, 1)
+    obs.obs_properties_add_text(props, "format_text", "Format Text", obs.OBS_TEXT_DEFAULT)
     return props
 end
 
@@ -31,6 +33,10 @@ function script_update(settings)
     source_name = obs.obs_data_get_string(settings, "source")
     start_number = obs.obs_data_get_int(settings, "start_number")
     step_number = obs.obs_data_get_int(settings, "step_number")
+    format_text = obs.obs_data_get_string(settings, "format_text")
+    if format_text == "" then
+        format_text = "Kills: %d (Start:%d, Step:%d)"
+    end
     counter = start_number
     update_text()
 end
@@ -39,8 +45,7 @@ function update_text()
     local source = obs.obs_get_source_by_name(source_name)
     if source ~= nil then
         local settings = obs.obs_data_create()
-        -- Format Text: 시작값과 증가 단위 포함
-        local display = string.format("Kills: %d (Start:%d, Step:%d)", counter, start_number, step_number)
+        local display = string.format(format_text, counter, start_number, step_number)
         if plus_mode then 
             display = display .. "+"
         end
@@ -143,8 +148,10 @@ end
 -- 2. Load in OBS via Tools → Scripts
 -- 3. Add a Text(GDI+) source named **KillCounter**
 -- 4. Configure hotkeys in OBS Settings → Hotkeys
--- 5. Set **Start Number** and **Step Number** in script properties
+-- 5. Set **Start Number**, **Step Number**, and **Format Text** in script properties
 --    - Start Number: 카운터 시작 값
 --    - Step Number: 증가/감소 단위
--- 6. Format Text 예시:
---    - "Kills: %d (Start:%d, Step:%d)" → "Kills: 5 (Start:0, Step:1)"
+--    - Format Text: 출력 포맷 문자열 (예: "Kills: %d", "Score=%d | Start=%d | Step=%d")
+--      - 첫 번째 `%d` → 현재 카운터 값
+--      - 두 번째 `%d` → Start Number
+--      - 세 번째 `%d` → Step Number
