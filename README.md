@@ -3,7 +3,7 @@
 -- OBS Lua script to display a kill counter with support for + and ∞ symbols.
 --
 -- ## Features
--- - Increase / Decrease counter
+-- - Increase / Decrease counter (UP/DOWN 단축키로만 작동)
 -- - Toggle + symbol
 -- - Toggle ∞ symbol
 -- - Hotkey support with save/load
@@ -15,11 +15,15 @@
 -- 2. Load in OBS via Tools → Scripts
 -- 3. Add a Text(GDI+) source named **KillCounter**
 -- 4. Configure hotkeys in OBS Settings → Hotkeys
+--    - Increase Kill Counter (UP): 카운터를 step 단위로 증가
+--    - Decrease Kill Counter (DOWN): 카운터를 step 단위로 감소
+--    - Toggle Plus (+): + 기호 표시/숨김
+--    - Toggle Infinity (∞): ∞ 기호 표시/숨김
 -- 5. Set **Start Number**, **Step Number**, and **Format Text** in script properties
 --    - Start Number: 카운터 시작 값
 --    - Step Number: 증가/감소 단위
 --    - Format Text: 출력 포맷 문자열
---      - `%d` → 현재 카운터 값
+--      - 첫 번째 `%d` → 현재 카운터 값
 --      - 두 번째 `%d` → Start Number
 --      - 세 번째 `%d` → Step Number
 --
