@@ -1,12 +1,14 @@
+-- README 설명을 주석으로 포함
 -- KillCounter+∞ for OBS
 -- OBS Lua script to display a kill counter with support for + and ∞ symbols.
-
+--
 -- Features
 -- Increase / Decrease counter
 -- Toggle + symbol
 -- Toggle ∞ symbol
 -- Hotkey support with save/load
-
+-- Start number / Step number support
+--
 -- Usage
 -- Save killcounter.lua
 -- Load in OBS via Tools → Scripts
