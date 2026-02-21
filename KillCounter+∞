@@ -27,6 +27,11 @@ function script_update(settings)
     update_text()
 end
 
+-- 시작 숫자와 증가 단위 설정
+start_number = 0
+step_number = 1
+counter = start_number
+
 function update_text()
     local source = obs.obs_get_source_by_name(source_name)
     if source ~= nil then
