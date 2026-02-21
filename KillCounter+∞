@@ -31,7 +31,8 @@ function update_text()
     local source = obs.obs_get_source_by_name(source_name)
     if source ~= nil then
         local settings = obs.obs_data_create()
-        local display = tostring(counter)
+        -- 여기서 포맷을 지정
+        local display = string.format("Kills: %d", counter)
         if plus_mode then 
             display = display .. "+"
         end
@@ -44,6 +45,7 @@ function update_text()
         obs.obs_source_release(source)
     end
 end
+
 
 
 -- 핫키 동작
