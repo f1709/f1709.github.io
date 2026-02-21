@@ -90,8 +90,8 @@ end
 
 -- 스크립트 로드 시 핫키 등록
 function script_load(settings)
-    hotkey_inc = obs.obs_hotkey_register_frontend("kill_counter_inc", "Increase Kill Counter", increment_counter)
-    hotkey_dec = obs.obs_hotkey_register_frontend("kill_counter_dec", "Decrease Kill Counter", decrement_counter)
+    hotkey_inc = obs.obs_hotkey_register_frontend("kill_counter_inc", "Increase Kill Counter (UP)", increment_counter)
+    hotkey_dec = obs.obs_hotkey_register_frontend("kill_counter_dec", "Decrease Kill Counter (DOWN)", decrement_counter)
     hotkey_plus = obs.obs_hotkey_register_frontend("kill_counter_plus", "Toggle Plus (+)", toggle_plus)
     hotkey_infinity = obs.obs_hotkey_register_frontend("kill_counter_infinity", "Toggle Infinity (∞)", toggle_infinity)
 
@@ -130,28 +130,3 @@ function script_save(settings)
     obs.obs_data_set_array(settings, "kill_counter_infinity", a)
     obs.obs_data_array_release(a)
 end
-
--- README 설명을 주석으로 포함
--- # KillCounter+∞ for OBS
--- OBS Lua script to display a kill counter with support for + and ∞ symbols.
---
--- ## Features
--- - Increase / Decrease counter
--- - Toggle + symbol
--- - Toggle ∞ symbol
--- - Hotkey support with save/load
--- - Start Number / Step Number support
--- - Format Text support (숫자 표시 포맷 지정 가능)
---
--- ## Usage
--- 1. Save `killcounter.lua`
--- 2. Load in OBS via Tools → Scripts
--- 3. Add a Text(GDI+) source named **KillCounter**
--- 4. Configure hotkeys in OBS Settings → Hotkeys
--- 5. Set **Start Number**, **Step Number**, and **Format Text** in script properties
---    - Start Number: 카운터 시작 값
---    - Step Number: 증가/감소 단위
---    - Format Text: 출력 포맷 문자열 (예: "Kills: %d", "Score=%d | Start=%d | Step=%d")
---      - 첫 번째 `%d` → 현재 카운터 값
---      - 두 번째 `%d` → Start Number
---      - 세 번째 `%d` → Step Number
