@@ -15,8 +15,17 @@
 -- 2. Load in OBS via Tools → Scripts
 -- 3. Add a Text(GDI+) source named **KillCounter**
 -- 4. Configure hotkeys in OBS Settings → Hotkeys
--- 5. Set **Start Number** and **Step Number** in script properties
---   - Start Number: 카운터 시작 값
---   - Step Number: 증가/감소 단위
--- 6. Format Text 예시:
---   - `"Kills: %d (Start:%d, Step:%d)"` → `Kills: 5 (Start:0, Step:1)`
+-- 5. Set **Start Number**, **Step Number**, and **Format Text** in script properties
+--    - Start Number: 카운터 시작 값
+--    - Step Number: 증가/감소 단위
+--    - Format Text: 출력 포맷 문자열
+--      - `%d` → 현재 카운터 값
+--      - 두 번째 `%d` → Start Number
+--      - 세 번째 `%d` → Step Number
+--
+-- ## Example
+-- Format Text: "Kills: %d (Start:%d, Step:%d)"
+-- Output: "Kills: 5 (Start:0, Step:1)"
+--
+-- Format Text: "Score=%d | Start=%d | Step=%d"
+-- Output: "Score=10 | Start=0 | Step=2"
