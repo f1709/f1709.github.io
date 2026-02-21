@@ -17,7 +17,7 @@ plus_mode = false
 infinity_mode = false
 
 function script_description()
-    return "KillCounter+∞ : 숫자 증가/감소, +, ∞ 기호 토글 지원 (Start/Step/Format 포함)"
+    return "KillCounter+∞ : 숫자 증가/감소(UP/DOWN), +, ∞ 기호 토글 지원 (Start/Step/Format 포함)"
 end
 
 function script_properties()
@@ -26,6 +26,10 @@ function script_properties()
     obs.obs_properties_add_int(props, "start_number", "Start Number", 0, 9999, 1)
     obs.obs_properties_add_int(props, "step_number", "Step Number", 1, 100, 1)
     obs.obs_properties_add_text(props, "format_text", "Format Text", obs.OBS_TEXT_DEFAULT)
+
+    -- 안내용 텍스트 추가 (속성창에 표시됨)
+    obs.obs_properties_add_text(props, "info", "Hotkeys: UP=Increase, DOWN=Decrease, +, ∞", obs.OBS_TEXT_INFO)
+
     return props
 end
 
