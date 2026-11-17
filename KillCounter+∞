@@ -1,69 +1,128 @@
 obs = obslua
 
--- 기본 설정
+-- KillCounter+∞ for OBS
+-- + : increase counter
+-- - : decrease counter
+-- P : toggle + symbol
+-- I : toggle ∞ symbol
+
 start_number = 0
 step_number = 1
 counter = start_number
 source_name = "KillCounter"
-format_text = "Kills: %d (Start:%d, Step:%d)"
+format_text = "Kills: %d"
 
--- 핫키 ID 저장
+plus_mode = false
+infinity_mode = false
+
 hotkey_inc = obs.OBS_INVALID_HOTKEY_ID
 hotkey_dec = obs.OBS_INVALID_HOTKEY_ID
 hotkey_plus = obs.OBS_INVALID_HOTKEY_ID
 hotkey_infinity = obs.OBS_INVALID_HOTKEY_ID
 
-plus_mode = false
-infinity_mode = false
-
 function script_description()
-    return "KillCounter+∞ : 숫자 증가/감소(UP/DOWN), +, ∞ 기호 토글 지원 (Start/Step/Format 포함)"
+    return "KillCounter+∞ : +/−로 숫자 증가/감소, P로 + 기호, I로 ∞ 기호 토글"
 end
 
 function script_properties()
     local props = obs.obs_properties_create()
-    obs.obs_properties_add_text(props, "source", "Text Source Name", obs.OBS_TEXT_DEFAULT)
-    obs.obs_properties_add_int(props, "start_number", "Start Number", 0, 9999, 1)
-    obs.obs_properties_add_int(props, "step_number", "Step Number", 1, 100, 1)
-    obs.obs_properties_add_text(props, "format_text", "Format Text", obs.OBS_TEXT_DEFAULT)
 
-    -- 안내용 텍스트 추가 (속성창에 표시됨)
-    obs.obs_properties_add_text(props, "info", "Hotkeys: UP=Increase, DOWN=Decrease, +, ∞", obs.OBS_TEXT_INFO)
+    obs.obs_properties_add_text(
+        props,
+        "source",
+        "Text Source Name",
+        obs.OBS_TEXT_DEFAULT
+    )
+
+    obs.obs_properties_add_int(
+        props,
+        "start_number",
+        "Start Number",
+        -999999,
+        999999,
+        1
+    )
+
+    obs.obs_properties_add_int(
+        props,
+        "step_number",
+        "Step Number",
+        1,
+        100,
+        1
+    )
+
+    obs.obs_properties_add_text(
+        props,
+        "format_text",
+        "Format Text",
+        obs.OBS_TEXT_DEFAULT
+    )
+
+    obs.obs_properties_add_text(
+        props,
+        "info",
+        "Hotkeys: + = Increase, - = Decrease, P = Plus, I = Infinity",
+        obs.OBS_TEXT_INFO
+    )
 
     return props
 end
 
 function script_update(settings)
     source_name = obs.obs_data_get_string(settings, "source")
+
+    if source_name == "" then
+        source_name = "KillCounter"
+    end
+
     start_number = obs.obs_data_get_int(settings, "start_number")
     step_number = obs.obs_data_get_int(settings, "step_number")
-    format_text = obs.obs_data_get_string(settings, "format_text")
-    if format_text == "" then
-        format_text = "Kills: %d (Start:%d, Step:%d)"
+
+    if step_number < 1 then
+        step_number = 1
     end
+
+    format_text = obs.obs_data_get_string(settings, "format_text")
+
+    if format_text == "" then
+        format_text = "Kills: %d"
+    end
+
     counter = start_number
     update_text()
 end
 
 function update_text()
     local source = obs.obs_get_source_by_name(source_name)
+
     if source ~= nil then
         local settings = obs.obs_data_create()
-        local display = string.format(format_text, counter, start_number, step_number)
-        if plus_mode then 
+
+        local display = string.format(
+            format_text,
+            counter,
+            start_number,
+            step_number
+        )
+
+        if plus_mode then
             display = display .. "+"
         end
-        if infinity_mode then 
+
+        if infinity_mode then
             display = display .. "∞"
         end
+
         obs.obs_data_set_string(settings, "text", display)
         obs.obs_source_update(source, settings)
+
         obs.obs_data_release(settings)
         obs.obs_source_release(source)
     end
 end
 
--- 핫키 동작
+-- 숫자 증가
 function increment_counter(pressed)
     if pressed then
         counter = counter + step_number
@@ -71,6 +130,7 @@ function increment_counter(pressed)
     end
 end
 
+-- 숫자 감소
 function decrement_counter(pressed)
     if pressed then
         counter = counter - step_number
@@ -78,6 +138,7 @@ function decrement_counter(pressed)
     end
 end
 
+-- + 기호 표시/숨김
 function toggle_plus(pressed)
     if pressed then
         plus_mode = not plus_mode
@@ -85,6 +146,7 @@ function toggle_plus(pressed)
     end
 end
 
+-- ∞ 기호 표시/숨김
 function toggle_infinity(pressed)
     if pressed then
         infinity_mode = not infinity_mode
@@ -92,12 +154,36 @@ function toggle_infinity(pressed)
     end
 end
 
--- 스크립트 로드 시 핫키 등록
+-- OBS 스크립트 로드
 function script_load(settings)
-    hotkey_inc = obs.obs_hotkey_register_frontend("kill_counter_inc", "Increase Kill Counter (UP)", increment_counter)
-    hotkey_dec = obs.obs_hotkey_register_frontend("kill_counter_dec", "Decrease Kill Counter (DOWN)", decrement_counter)
-    hotkey_plus = obs.obs_hotkey_register_frontend("kill_counter_plus", "Toggle Plus (+)", toggle_plus)
-    hotkey_infinity = obs.obs_hotkey_register_frontend("kill_counter_infinity", "Toggle Infinity (∞)", toggle_infinity)
+
+    -- + 키: 숫자 증가
+    hotkey_inc = obs.obs_hotkey_register_frontend(
+        "kill_counter_inc",
+        "Increase Kill Counter (+)",
+        increment_counter
+    )
+
+    -- - 키: 숫자 감소
+    hotkey_dec = obs.obs_hotkey_register_frontend(
+        "kill_counter_dec",
+        "Decrease Kill Counter (-)",
+        decrement_counter
+    )
+
+    -- P 키: + 기호 토글
+    hotkey_plus = obs.obs_hotkey_register_frontend(
+        "kill_counter_plus",
+        "Toggle Plus Symbol (P)",
+        toggle_plus
+    )
+
+    -- I 키: ∞ 기호 토글
+    hotkey_infinity = obs.obs_hotkey_register_frontend(
+        "kill_counter_infinity",
+        "Toggle Infinity Symbol (I)",
+        toggle_infinity
+    )
 
     local a = obs.obs_data_get_array(settings, "kill_counter_inc")
     obs.obs_hotkey_load(hotkey_inc, a)
@@ -114,10 +200,13 @@ function script_load(settings)
     a = obs.obs_data_get_array(settings, "kill_counter_infinity")
     obs.obs_hotkey_load(hotkey_infinity, a)
     obs.obs_data_array_release(a)
+
+    update_text()
 end
 
--- 스크립트 저장 시 핫키 저장
+-- OBS 스크립트 저장
 function script_save(settings)
+
     local a = obs.obs_hotkey_save(hotkey_inc)
     obs.obs_data_set_array(settings, "kill_counter_inc", a)
     obs.obs_data_array_release(a)
