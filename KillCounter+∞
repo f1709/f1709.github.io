@@ -34,22 +34,20 @@ function script_properties()
         obs.OBS_TEXT_DEFAULT
     )
 
-    obs.obs_properties_add_int(
+    -- Start Number: OBS 입력 범위 제한 없음
+    obs.obs_properties_add_text(
         props,
         "start_number",
         "Start Number",
-        -2147483648,
-        2147483647,
-        1
+        obs.OBS_TEXT_DEFAULT
     )
 
-    obs.obs_properties_add_int(
+    -- Step Number: OBS 입력 범위 제한 없음
+    obs.obs_properties_add_text(
         props,
         "step_number",
         "Step Number",
-        1,
-        2147483647,
-        1
+        obs.OBS_TEXT_DEFAULT
     )
 
     obs.obs_properties_add_text(
@@ -76,10 +74,15 @@ function script_update(settings)
         source_name = "KillCounter"
     end
 
-    start_number = obs.obs_data_get_int(settings, "start_number")
-    step_number = obs.obs_data_get_int(settings, "step_number")
+    -- Start Number와 Step Number는 텍스트로 입력받아
+    -- OBS 속성창의 고정된 최소/최대 범위를 사용하지 않습니다.
+    local start_text = obs.obs_data_get_string(settings, "start_number")
+    local step_text = obs.obs_data_get_string(settings, "step_number")
 
-    if step_number < 1 then
+    start_number = tonumber(start_text) or 0
+    step_number = tonumber(step_text) or 1
+
+    if step_number == 0 then
         step_number = 1
     end
 
@@ -122,7 +125,6 @@ function update_text()
     end
 end
 
--- 숫자 증가
 function increment_counter(pressed)
     if pressed then
         counter = counter + step_number
@@ -130,7 +132,6 @@ function increment_counter(pressed)
     end
 end
 
--- 숫자 감소
 function decrement_counter(pressed)
     if pressed then
         counter = counter - step_number
@@ -138,7 +139,6 @@ function decrement_counter(pressed)
     end
 end
 
--- + 기호 표시/숨김
 function toggle_plus(pressed)
     if pressed then
         plus_mode = not plus_mode
@@ -146,7 +146,6 @@ function toggle_plus(pressed)
     end
 end
 
--- ∞ 기호 표시/숨김
 function toggle_infinity(pressed)
     if pressed then
         infinity_mode = not infinity_mode
@@ -154,9 +153,7 @@ function toggle_infinity(pressed)
     end
 end
 
--- OBS 스크립트 로드
 function script_load(settings)
-
     -- + 키: 숫자 증가
     hotkey_inc = obs.obs_hotkey_register_frontend(
         "kill_counter_inc",
@@ -204,9 +201,7 @@ function script_load(settings)
     update_text()
 end
 
--- OBS 스크립트 저장
 function script_save(settings)
-
     local a = obs.obs_hotkey_save(hotkey_inc)
     obs.obs_data_set_array(settings, "kill_counter_inc", a)
     obs.obs_data_array_release(a)
